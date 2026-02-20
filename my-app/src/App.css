@@ -76,6 +76,10 @@
   margin-left: 10px;
 }
 
+.button:hover {
+  background-color: darkgrey
+}
+
 .button-container {
   position: absolute;
   top: 10px;
