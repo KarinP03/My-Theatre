@@ -46,12 +46,12 @@ function App() {
                 </button>
             </div>
             <div className="poster-container">
-                <img src={poster} className="poster"></img>
-                <img src={poster} className="poster"></img>
-                <img src={poster} className="poster"></img>
-                <img src={poster} className="poster"></img>
-                <img src={poster} className="poster"></img>
-                <img src={poster} className="poster"></img>
+                <img src={poster} className="poster" onClick={showModal}></img>
+                <img src={poster} className="poster" onClick={showModal}></img>
+                <img src={poster} className="poster" onClick={showModal}></img>
+                <img src={poster} className="poster" onClick={showModal}></img>
+                <img src={poster} className="poster" onClick={showModal}></img>
+                <img src={poster} className="poster" onClick={showModal}></img>
             </div>
             <Modal className="details" show={modalVisible} onHide={hideModal}>
                 <Modal.Header closeButton>
