@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import backgroundImage from "../../2d-assets/background/Background3.png";
+import poster from "../../2d-assets/poster/poster-border-no-fill.png";
 import walkl1 from "../../2d-assets/sprite/LeftWalk1.png";
 import walkl2 from "../../2d-assets/sprite/LeftWalk2.png";
 import walkl3 from "../../2d-assets/sprite/LeftWalk3.png";
@@ -9,12 +10,16 @@ import walkr2 from "../../2d-assets/sprite/RightWalk2.png";
 import walkr3 from "../../2d-assets/sprite/RightWalk3.png";
 import { draw } from "./animation";
 import "./App.css";
+import { move } from "./frameAnimation";
 
 function App() {
     useEffect(() => {
         // React has finished rendering, so the element now exists in the DOM
         draw(walkr1, walkr2, walkr3, walkl1, walkl2, walkl3);
     }, []);
+    useEffect(() => {
+        move();
+    }, [])
     return (
         <>
             <div className="gallery">
@@ -29,6 +34,14 @@ function App() {
                 </Link>
                 <button className="button">Save</button>
                 <button className="button">Load</button>
+            </div>
+            <div className="poster-container">
+                <img src={poster} className="poster"></img>
+                <img src={poster} className="poster"></img>
+                <img src={poster} className="poster"></img>
+                <img src={poster} className="poster"></img>
+                <img src={poster} className="poster"></img>
+                <img src={poster} className="poster"></img>
             </div>
         </>
     );
