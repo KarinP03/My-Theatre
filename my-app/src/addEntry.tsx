@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import "./App.css";
 
 function addEntry() {
@@ -32,6 +33,10 @@ function addEntry() {
           <label>Notes: </label>
           <input type="text" name="notes" id="notes"></input>
         </div>
+        <Link to="/home">
+          <button className="button">Cancel</button>
+        </Link>
+        <button type="submit">Submit</button>
       </form>
     </>
   );
