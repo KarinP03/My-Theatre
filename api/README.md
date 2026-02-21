@@ -72,7 +72,11 @@ When `data` contains a movie, it looks like this:
   "imageUrl": "https://m.media-amazon.com/images/M/...jpg",
   "rating": 10,
   "notes": "Favorite movie",
-  "tags": ["favorite", "nolan"]
+  "tags": ["favorite", "nolan"],
+  "format": "4K UHD",
+  "audioQuality": "Dolby Atmos",
+  "purchasedAt": "2026-02-21",
+  "watched": true
 }
 ```
 
@@ -134,7 +138,11 @@ Fetch full movie details from OMDB by `imdbId` and save it to the local collecti
   "imdbId": "tt1375666",
   "rating": 10, // Optional
   "tags": ["Action"], // Optional
-  "notes": "Great!" // Optional
+  "notes": "Great!", // Optional
+  "format": "4K UHD", // Optional — "4K UHD", "Blu-ray", "DVD"
+  "audioQuality": "Dolby Atmos", // Optional
+  "purchasedAt": "2026-02-21", // Optional — ISO date string
+  "watched": false // Optional — defaults to false
 }
 ```
 
@@ -157,7 +165,11 @@ Manually add a movie circumventing OMDB entirely.
   "imageUrl": "...", // Optional
   "rating": 8, // Optional
   "tags": [], // Optional
-  "notes": "..." // Optional
+  "notes": "...", // Optional
+  "format": "Blu-ray", // Optional — "4K UHD", "Blu-ray", "DVD"
+  "audioQuality": "DTS-HD MA 7.1", // Optional
+  "purchasedAt": "2026-02-21", // Optional — ISO date string
+  "watched": false // Optional — defaults to false
 }
 ```
 

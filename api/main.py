@@ -64,10 +64,10 @@ def get_era(year: int) -> str:
 
 
 class ManualAddReq(BaseModel):
+
     title: str
     year: int
     director: str = "Unknown"
-
     genre: list[str]
     plot: str | None = None  # optional
     runtime: str | None = None  # optional
@@ -76,12 +76,25 @@ class ManualAddReq(BaseModel):
     tags: list[str] = []  # optional
     notes: str | None = None  # optional
 
+    # Physical collection fields
+    format: str | None = None 
+    audioQuality: str | None = None  
+    purchasedAt: str | None = None 
+    watched: bool = False 
+
 
 class AddOmdbReq(BaseModel):
+    
     imdbId: str
     rating: float | int | None = None  # optional
     tags: list[str] = []  # optional
     notes: str | None = None  # optional
+
+    # Physical collection fields
+    format: str | None = None
+    audioQuality: str | None = None
+    purchasedAt: str | None = None
+    watched: bool = False
 
 
 # Routes
@@ -216,6 +229,10 @@ async def add_omdb(req: AddOmdbReq):
         "rating": req.rating,
         "notes": req.notes,
         "tags": req.tags,
+        "format": req.format,
+        "audioQuality": req.audioQuality,
+        "purchasedAt": req.purchasedAt,
+        "watched": req.watched,
     }
 
     movies.append(new_movie)
