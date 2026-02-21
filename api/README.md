@@ -127,6 +127,31 @@ Ping the external OMDB API to search for movies to add. Does not save to the dat
 }
 ```
 
+### `GET /api/collections/movies/lookup/title?title={title}&year={year}`
+
+Exact title lookup from OMDB using the `t=` parameter. Returns a single full movie record (including plot, ratings, runtime etc.) rather than a list. Useful for previewing full details before adding.
+
+- `title`: Exact movie title to search for.
+- `year`: (Optional) Release year to disambiguate titles that appear multiple times.
+
+- **Expected Output**: Success Envelope where `data` is a full OMDB detail object, or `null` if not found:
+
+```json
+{
+  "success": true,
+  "data": {
+    "Title": "Inception",
+    "Year": "2010",
+    "imdbID": "tt1375666",
+    "Director": "Christopher Nolan",
+    "Plot": "A thief who steals corporate secrets...",
+    "Poster": "https://...",
+    "imdbRating": "8.8"
+  },
+  "total": null
+}
+```
+
 ### `POST /api/collections/movies/add`
 
 Fetch full movie details from OMDB by `imdbId` and save it to the local collection.

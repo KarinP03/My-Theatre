@@ -11,7 +11,13 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = FastAPI()
-app.add_middleware(CORSMiddleware, allow_origins=["*"])
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 DATA_FILE = os.path.join(DATA_DIR, "movies.json")
@@ -77,14 +83,14 @@ class ManualAddReq(BaseModel):
     notes: str | None = None  # optional
 
     # Physical collection fields
-    format: str | None = None 
-    audioQuality: str | None = None  
-    purchasedAt: str | None = None 
-    watched: bool = False 
+    format: str | None = None
+    audioQuality: str | None = None
+    purchasedAt: str | None = None
+    watched: bool = False
 
 
 class AddOmdbReq(BaseModel):
-    
+
     imdbId: str
     rating: float | int | None = None  # optional
     tags: list[str] = []  # optional
@@ -153,6 +159,23 @@ async def omdb_lookup(q: str, p: int = 1):
 
         results = data.get("Search", [])
         return success(results, total=len(results))
+
+
+@app.get("/api/collections/movies/lookup/title")
+async def omdb_lookup_by_title(title: str, year: int | None = None):
+    """Exact title search via OMDB `t=` parameter. Year is optional."""
+    params = f"t={title}&type=movie"
+    if year is not None:
+        params += f"&y={year}"
+
+    async with httpx.AsyncClient() as client:
+        r = await client.get(f"{OMDB_BASE_URL}/?apikey={OMDB_API_KEY}&{params}")
+        data = r.json()
+
+    if data.get("Response") == "False":
+        return success(None)
+
+    return success(data)
 
 
 @app.get("/api/collections/movies/{id}")
