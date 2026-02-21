@@ -5,6 +5,7 @@ import "./App.css";
 // import detailsModal from "./detailsModal.tsx";
 import { useState } from "react";
 import Modal from "react-bootstrap/Modal";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
   const [modalVisible, setModalVisible] = useState(false);
@@ -23,10 +24,11 @@ function App() {
         <Link to="/addEntry">
           <button className="button">+</button>
         </Link>
-        <button className="button" onClick={showModal}>
-          Save
-        </button>
+        <button className="button">Save</button>
         <button className="button">Load</button>
+        <button className="button" onClick={showModal}>
+          Modal test
+        </button>
       </div>
 
       <Modal className="details" show={modalVisible} onHide={hideModal}>
