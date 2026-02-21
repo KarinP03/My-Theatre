@@ -2,6 +2,7 @@
   max-width: 1280px;
   margin: 0 auto;
   text-align: center;
+  overflow-x: hidden;
 }
 
 .logo {
@@ -46,7 +47,13 @@
 .sprite {
   position: absolute;
   bottom: 0;
-  height: 20vh;
+  height: 100vh;
+}
+
+.sprite-container {
+  position: absolute;
+  bottom: 0px;
+  left: 45vw;
 }
 
 .background {
@@ -84,4 +91,20 @@
   position: absolute;
   top: 10px;
   left: 10px;
+}
+
+.poster {
+  margin-left: 100px;
+  height: 50vh;
+}
+
+.poster-container {
+  position: absolute;
+  top: 15vh;
+  left: 10px;
+  width: calc(100vw - 10px);
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  overflow-x: hidden;
 }
