@@ -15,9 +15,10 @@ function App() {
           <img src={sprite} className="sprite"></img>
         </div>
         <div className="button-container">
-          <button className="button">
-            <Link to="/addEntry">+</Link>
-          </button>
+          <Link to="/addEntry">
+            <button className="button">+</button>
+          </Link>
+
           <button className="button">Save</button>
           <button className="button">Load</button>
         </div>
