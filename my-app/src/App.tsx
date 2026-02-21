@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
 import backgroundImage from "../../2d-assets/background/Background3.png";
 import walkl1 from "../../2d-assets/sprite/LeftWalk1.png";
 import walkl2 from "../../2d-assets/sprite/LeftWalk2.png";
@@ -10,25 +11,27 @@ import { draw } from "./animation";
 import "./App.css";
 
 function App() {
-  useEffect(() => {
-    // React has finished rendering, so the element now exists in the DOM
-    draw(walkr1, walkr2, walkr3, walkl1, walkl2, walkl3);
-  }, []);
-  return (
-    <>
-      <div className="gallery">
-        <img src={backgroundImage} className="background"></img>
-      </div>
-      <div className="sprite-container">
-        <canvas id="sprite"></canvas>
-      </div>
-      <div className="button-container">
-        <button className="button">+</button>
-        <button className="button">Save</button>
-        <button className="button">Load</button>
-      </div>
-    </>
-  );
+    useEffect(() => {
+        // React has finished rendering, so the element now exists in the DOM
+        draw(walkr1, walkr2, walkr3, walkl1, walkl2, walkl3);
+    }, []);
+    return (
+        <>
+            <div className="gallery">
+                <img src={backgroundImage} className="background"></img>
+            </div>
+            <div className="sprite-container">
+                <canvas id="sprite"></canvas>
+            </div>
+            <div className="button-container">
+                <Link to="/addEntry">
+                    <button className="button">+</button>
+                </Link>
+                <button className="button">Save</button>
+                <button className="button">Load</button>
+            </div>
+        </>
+    );
 }
 
 export default App;

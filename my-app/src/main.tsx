@@ -13,6 +13,5 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/addEntry" element={<AddEntry />}></Route>
       </Routes>
     </BrowserRouter>
-    <App />
   </StrictMode>,
 );
