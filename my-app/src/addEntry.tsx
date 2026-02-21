@@ -15,6 +15,7 @@ type OmdbSearchResult = {
   imdbID: string;
   Type: string;
   Poster: string;
+  Plot?: string; // now included in eager fetch
 };
 
 type OmdbFullResult = {
@@ -57,19 +58,19 @@ function AddEntry() {
   const [liveResults, setLiveResults] = useState<OmdbSearchResult[]>([]);
   const [liveLoading, setLiveLoading] = useState(false);
 
-  // Expanded plots (by imdbID)
-  const [expandedPlots, setExpandedPlots] = useState<Record<string, string>>(
-    {}
-  );
-  const [loadingPlots, setLoadingPlots] = useState<Record<string, boolean>>({});
-
   // Confirmation modal
-  const [selectedMovie, setSelectedMovie] = useState<OmdbFullResult | null>(
-    null
-  );
+  const [selectedMovie, setSelectedMovie] = useState<OmdbFullResult | null>(null);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [addLoading, setAddLoading] = useState(false);
   const [addSuccess, setAddSuccess] = useState(false);
+
+  // Physical Collection Fields
+  const [format, setFormat] = useState("");
+  const [audioQuality, setAudioQuality] = useState("");
+  const [rating, setRating] = useState("");
+  const [notes, setNotes] = useState("");
+  const [purchasedAt, setPurchasedAt] = useState("");
+  const [watched, setWatched] = useState(false);
 
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -78,7 +79,7 @@ function AddEntry() {
     if (debounceRef.current) clearTimeout(debounceRef.current);
 
     if (title.trim().length < 2) {
-      setLiveResults([]);
+      // setLiveResults([]); // Ensure results clear if title is too short
       return;
     }
 
@@ -113,52 +114,18 @@ function AddEntry() {
     };
   }, [title, year]);
 
-  const togglePlot = async (movie: OmdbSearchResult) => {
-    const id = movie.imdbID;
-
-    if (expandedPlots[id] !== undefined) {
-      setExpandedPlots((prev) => {
-        const next = { ...prev };
-        delete next[id];
-        return next;
-      });
-      return;
-    }
-
-    // Fetch plot
-    setLoadingPlots((prev) => ({ ...prev, [id]: true }));
-    try {
-      const res = await apiFetch(
-        `/api/collections/movies/lookup/title?title=${encodeURIComponent(
-          movie.Title
-        )}&year=${encodeURIComponent(movie.Year)}`
-      );
-      const json: LookupByTitleResponse = await res.json();
-      if (json.success && json.data) {
-        setExpandedPlots((prev) => ({
-          ...prev,
-          [id]: json.data!.Plot || "No plot available.",
-        }));
-      } else {
-        setExpandedPlots((prev) => ({
-          ...prev,
-          [id]: "Plot not available.",
-        }));
-      }
-    } catch {
-      setExpandedPlots((prev) => ({
-        ...prev,
-        [id]: "Failed to load plot.",
-      }));
-    } finally {
-      setLoadingPlots((prev) => ({ ...prev, [id]: false }));
-    }
-  };
-
   const openConfirm = async (movie: OmdbSearchResult) => {
     setConfirmLoading(true);
     setSelectedMovie(null);
     setAddSuccess(false);
+
+    // Reset inputs
+    setFormat("");
+    setAudioQuality("");
+    setRating("");
+    setNotes("");
+    setPurchasedAt("");
+    setWatched(false);
 
     try {
       const res = await apiFetch(
@@ -170,9 +137,9 @@ function AddEntry() {
       if (json.success && json.data) {
         setSelectedMovie(json.data);
       }
-    } catch {}
-    
-    finally {
+    } catch {
+      /* silently fail */
+    } finally {
       setConfirmLoading(false);
     }
   };
@@ -184,15 +151,23 @@ function AddEntry() {
       await apiFetch("/api/collections/movies/add", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ imdbId: selectedMovie.imdbID }),
+        body: JSON.stringify({
+          imdbId: selectedMovie.imdbID,
+          format: format || undefined,
+          audioQuality: audioQuality || undefined,
+          rating: rating ? Number(rating) : undefined,
+          notes: notes || undefined,
+          purchasedAt: purchasedAt || undefined,
+          watched: watched
+        }),
       });
       setAddSuccess(true);
       setTimeout(() => {
         setSelectedMovie(null);
         setAddSuccess(false);
-        setTitle("");
-        setYear("");
-        setLiveResults([]);
+        // setTitle("");
+        // setYear("");
+        // setLiveResults([]);
       }, 1200);
     } catch {
       /* silently fail */
@@ -201,7 +176,7 @@ function AddEntry() {
     }
   };
 
-    return (
+  return (
     <div className="search-page">
       <div className="search-bar glass">
         <svg
@@ -263,27 +238,15 @@ function AddEntry() {
                 <div className="result-info">
                   <p className="result-title">{movie.Title}</p>
                   <p className="result-year">{movie.Year}</p>
-                  <button
-                    className="result-plot-toggle"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      togglePlot(movie);
-                    }}
-                  >
-                    {loadingPlots[movie.imdbID]
-                      ? "Loading…"
-                      : expandedPlots[movie.imdbID] !== undefined
-                        ? "▾ Hide plot"
-                        : "▸ Show plot"}
-                  </button>
+                  {movie.Plot && (
+                    <p className="result-plot" style={{ padding: '8px 0 0 0', margin: 0, textOverflow: 'ellipsis', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
+                      {movie.Plot}
+                    </p>
+                  )}
                 </div>
 
                 <span className="result-arrow">›</span>
               </div>
-
-              {expandedPlots[movie.imdbID] !== undefined && (
-                <p className="result-plot">{expandedPlots[movie.imdbID]}</p>
-              )}
             </div>
           ))}
         </div>
@@ -346,11 +309,6 @@ function AddEntry() {
                     <p className="confirm-sub">
                       Directed by {selectedMovie.Director}
                     </p>
-                    {selectedMovie.Actors && (
-                      <p className="confirm-sub">
-                        Cast: {selectedMovie.Actors}
-                      </p>
-                    )}
                     {selectedMovie.imdbRating && (
                       <p className="confirm-rating">
                         ⭐ {selectedMovie.imdbRating}/10
@@ -363,10 +321,45 @@ function AddEntry() {
                 </div>
 
                 {selectedMovie.Plot && (
-                  <p className="confirm-plot">{selectedMovie.Plot}</p>
+                  <p className="confirm-plot" style={{ marginBottom: 12 }}>{selectedMovie.Plot}</p>
                 )}
 
                 <hr className="confirm-divider" />
+
+                {/* Collection Fields */}
+                <div className="confirm-fields" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  <h4 style={{ margin: '0 0 4px 0', fontSize: '1rem', color: '#fff' }}>Collection Details</h4>
+                  <div style={{ display: 'flex', gap: '12px' }}>
+                    <label className="confirm-label" style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)' }}>
+                      Format
+                      <input type="text" value={format} onChange={e => setFormat(e.target.value)} placeholder="e.g. 4K Blu-ray, DVD" className="confirm-input" style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', padding: '8px 12px', borderRadius: '6px', color: '#fff', outline: 'none' }} />
+                    </label>
+                    <label className="confirm-label" style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)' }}>
+                      Audio Quality
+                      <input type="text" value={audioQuality} onChange={e => setAudioQuality(e.target.value)} placeholder="e.g. Dolby Atmos" className="confirm-input" style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', padding: '8px 12px', borderRadius: '6px', color: '#fff', outline: 'none' }} />
+                    </label>
+                  </div>
+                  <div style={{ display: 'flex', gap: '12px' }}>
+                    <label className="confirm-label" style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)' }}>
+                      Date Acquired
+                      <input type="date" value={purchasedAt} onChange={e => setPurchasedAt(e.target.value)} className="confirm-input" style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', padding: '8px 12px', borderRadius: '6px', color: '#fff', outline: 'none', colorScheme: 'dark' }} />
+                    </label>
+                    <label className="confirm-label" style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)' }}>
+                      Your Rating (1-10)
+                      <input type="number" min="1" max="10" value={rating} onChange={e => setRating(e.target.value)} placeholder="e.g. 9" className="confirm-input" style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', padding: '8px 12px', borderRadius: '6px', color: '#fff', outline: 'none' }} />
+                    </label>
+                  </div>
+                  <label className="confirm-label" style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)' }}>
+                    Notes / Location
+                    <textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Shelf 3, Steelbook..." className="confirm-input confirm-textarea" style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', padding: '8px 12px', borderRadius: '6px', color: '#fff', outline: 'none', minHeight: '60px', resize: 'vertical' }} />
+                  </label>
+                  <label className="confirm-label confirm-label--row" style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.95rem', color: '#fff', cursor: 'pointer', marginTop: '4px' }}>
+                    <input type="checkbox" checked={watched} onChange={e => setWatched(e.target.checked)} style={{ width: '18px', height: '18px', accentColor: '#4facfe', cursor: 'pointer' }} />
+                    Mark as watched
+                  </label>
+                </div>
+
+                <hr className="confirm-divider" style={{ marginTop: 'auto' }} />
 
                 <div className="confirm-actions">
                   <button

@@ -56,11 +56,6 @@
   left: 45vw;
 }
 
-.background {
-  height: 100%;
-  width: 100%;
-}
-
 .gallery {
   position: absolute;
   width: 100%;
@@ -68,6 +63,9 @@
   left: 0;
   top: 0;
   z-index: 0;
+  background-repeat: repeat-x;
+  background-size: auto 100%;
+  background-position: 0px center;
 }
 
 .button {
@@ -94,8 +92,9 @@
 }
 
 .poster {
-  margin-left: 100px;
   height: 50vh;
+  pointer-events: none;
+  display: block;
 }
 
 .poster-container {
@@ -107,18 +106,60 @@
   flex-direction: row;
   flex-wrap: nowrap;
   overflow-x: hidden;
+  gap: 20px;
+  padding: 0 30px;
+  align-items: flex-end;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.poster-container::-webkit-scrollbar {
+  display: none;
+}
+
+.poster-wrapper {
+  position: relative;
+  flex-shrink: 0;
+  cursor: pointer;
+  text-align: center;
+}
+
+
+
+.poster-art {
+  position: absolute;
+  top: 6%;
+  left: 8%;
+  width: 84%;
+  height: 80%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.poster-label {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.75);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* ===================== */
 /*  Glassmorphism Base   */
 /* ===================== */
 .glass {
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(50, 5, 5, 0.65);
   backdrop-filter: blur(18px) saturate(180%);
   -webkit-backdrop-filter: blur(18px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 2px solid #5a2e15;
   border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
 }
 
 /* ===================== */
@@ -131,7 +172,9 @@
   min-height: 100vh;
   min-width: 100vw;
   padding: 0;
-  background: linear-gradient(160deg, #0f0c29 0%, #1a1a2e 40%, #16213e 100%);
+  background-image: url('../../2d-assets/background/Background3.png');
+  background-size: cover;
+  background-position: center;
   color: #fff;
   font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
 }
@@ -152,11 +195,11 @@
   border-top: none;
   border-left: none;
   border-right: none;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(15, 12, 41, 0.6);
+  border-bottom: 2px solid #5a2e15;
+  background: rgba(40, 0, 0, 0.85);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.7);
 }
 
 .search-bar-icon {
@@ -238,12 +281,39 @@
 .search-results {
   width: 100%;
   max-width: 720px;
+  /* Restrict height so it scrolls internally */
+  max-height: calc(100vh - 140px);
   display: flex;
   flex-direction: column;
   margin: 0 auto;
   border-radius: 16px;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
   animation: fadeSlideUp 0.25s ease-out;
+}
+
+/* Custom Reddish/Brown Scrollbar */
+.search-results::-webkit-scrollbar,
+.confirm-modal::-webkit-scrollbar,
+.modal::-webkit-scrollbar {
+  width: 8px;
+}
+.search-results::-webkit-scrollbar-track,
+.confirm-modal::-webkit-scrollbar-track,
+.modal::-webkit-scrollbar-track {
+  background: rgba(40, 0, 0, 0.5);
+  border-radius: 8px;
+}
+.search-results::-webkit-scrollbar-thumb,
+.confirm-modal::-webkit-scrollbar-thumb,
+.modal::-webkit-scrollbar-thumb {
+  background: #5a2e15; /* Wooden brown */
+  border-radius: 8px;
+}
+.search-results::-webkit-scrollbar-thumb:hover,
+.confirm-modal::-webkit-scrollbar-thumb:hover,
+.modal::-webkit-scrollbar-thumb:hover {
+  background: #7a3e1a; /* Lighter wood on hover */
 }
 
 @keyframes fadeSlideUp {
@@ -418,6 +488,8 @@
   padding: 28px;
   gap: 16px;
   overflow-y: auto;
+  border: 4px solid #4a2810;
+  box-shadow: 0 0 15px rgba(0,0,0,0.8) inset, 0 8px 32px rgba(0, 0, 0, 0.8);
   animation: modalSlideUp 0.3s ease-out;
 }
 
@@ -534,13 +606,14 @@
 }
 
 .confirm-btn--add {
-  background: linear-gradient(135deg, #6c63ff, #4facfe);
+  background: linear-gradient(135deg, #a52a2a, #800000);
+  border: 1px solid #ffaa00;
   color: #fff;
-  box-shadow: 0 4px 18px rgba(108, 99, 255, 0.4);
+  box-shadow: 0 4px 18px rgba(128, 0, 0, 0.6);
 }
 
 .confirm-btn--add:hover {
-  box-shadow: 0 6px 24px rgba(108, 99, 255, 0.55);
+  box-shadow: 0 6px 24px rgba(128, 0, 0, 0.8);
 }
 
 .confirm-btn--add:disabled {
@@ -579,5 +652,25 @@
   font-size: 1.05rem;
   color: rgba(255, 255, 255, 0.8);
   font-weight: 500;
+}
+
+/* ===================== */
+/*  Bootstrap Modal Theme  */
+/* ===================== */
+.modal-content {
+  background: rgba(40, 0, 0, 0.85) !important;
+  border: 4px solid #4a2810 !important;
+  color: #fff !important;
+  backdrop-filter: blur(18px) saturate(180%);
+  box-shadow: 0 0 15px rgba(0,0,0,0.8) inset, 0 8px 32px rgba(0, 0, 0, 0.8) !important;
+  border-radius: 16px !important;
+}
+
+.modal-header, .modal-footer {
+  border-color: rgba(90, 46, 21, 0.5) !important;
+}
+
+.btn-close {
+  filter: invert(1) grayscale(100%) brightness(200%);
 }
 

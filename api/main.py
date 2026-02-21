@@ -143,22 +143,36 @@ def search_movies(q: str):
     return success(res, total=len(res))
 
 
+import asyncio
+
+
 @app.get("/api/collections/movies/lookup")
 async def omdb_lookup(q: str, p: int = 1):
-
     async with httpx.AsyncClient() as client:
-
         r = await client.get(
             f"{OMDB_BASE_URL}/?apikey={OMDB_API_KEY}&s={q}&type=movie&page={p}"
         )
-
         data = r.json()
 
         if data.get("Response") == "False":
             return success([], total=0)
 
         results = data.get("Search", [])
-        return success(results, total=len(results))
+
+        # Concurrently fetch plot details for up to 10 results
+        async def fetch_plot(res_item):
+            detail_r = await client.get(
+                f"{OMDB_BASE_URL}/?apikey={OMDB_API_KEY}&i={res_item['imdbID']}&plot=short"
+            )
+            detail_data = detail_r.json()
+            res_item["Plot"] = detail_data.get("Plot", "No plot available.")
+            return res_item
+
+        detailed_results = await asyncio.gather(
+            *(fetch_plot(res) for res in results[:10])
+        )
+
+        return success(list(detailed_results), total=len(detailed_results))
 
 
 @app.get("/api/collections/movies/lookup/title")
