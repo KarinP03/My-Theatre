@@ -1,7 +1,7 @@
 export function draw(walkr1, walkr2, walkr3, walkl1, walkl2, walkl3) {
     const canvas = document.getElementById("sprite");
     const ctx = canvas.getContext("2d");
-    const images = [walkr1, walkr2, walkr3, walkl1, walkl2, walkl3];
+    const images = [walkr1, walkr2, walkr3, walkr2, walkl1, walkl2, walkl3, walkl2];
     function loadImages() {
         let loaded = 0;
         images.forEach((src, index) => {
@@ -56,7 +56,7 @@ export function draw(walkr1, walkr2, walkr3, walkl1, walkl2, walkl3) {
         else {
             framecount++;
             if (framecount % 10 == 1) {
-                cur = (cur + 1) % 3 + (direction === 'left') * 3;
+                cur = (cur + 1) % 4 + (direction === 'left') * 4;
             }
         }
         ctx.clearRect(0, 0, canvas.width, canvas.height);
