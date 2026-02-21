@@ -29,7 +29,7 @@ function App() {
         <button className="button">Load</button>
       </div>
 
-      <Modal show={modalVisible} onHide={hideModal}>
+      <Modal className="details" show={modalVisible} onHide={hideModal}>
         <Modal.Header closeButton>
           <Modal.Title>Movie title here</Modal.Title>
         </Modal.Header>

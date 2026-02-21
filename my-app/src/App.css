@@ -77,11 +77,15 @@
 }
 
 .button:hover {
-  background-color: darkgrey
+  background-color: darkgrey;
 }
 
 .button-container {
   position: absolute;
   top: 10px;
   left: 10px;
+}
+
+.details {
+  z-index: 10;
 }
