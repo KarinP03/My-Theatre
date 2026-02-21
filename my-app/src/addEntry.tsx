@@ -33,7 +33,7 @@ function addEntry() {
           <label>Notes: </label>
           <input type="text" name="notes" id="notes"></input>
         </div>
-        <Link to="/home">
+        <Link to="/">
           <button className="button">Cancel</button>
         </Link>
         <button type="submit">Submit</button>
